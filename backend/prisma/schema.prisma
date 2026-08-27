@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "sqlite"
+}
+
+model User {
+    id           String   @id @default(cuid())
+    username     String   @unique
+    email        String   @unique
+    passwordHash String
+    bio          String?
+    avatarUrl    String?
+    bannerUrl    String?
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    following Follow[]  @relation("Follower")
+    followers Follow[]  @relation("Following")
+    posts     Post[]
+    likes     Like[]
+    comments  Comment[]
+    listings  Listing[]
+}
+
+model Follow {
+    followerId  String
+    followingId String
+    createdAt   DateTime @default(now())
+
+    follower  User @relation("Follower", fields: [followerId], references: [id])
+    following User @relation("Following", fields: [followingId], references: [id])
+
+    @@id([followerId, followingId])
+}
+
+model Post {
+    id       String  @id @default(cuid())
+    authorId String
+    imageUrl String?
+    title    String?
+    caption  String
+
+    createdAt DateTime @default(now())
+
+    likes    Like[]
+    comments Comment[]
+
+    author User @relation(fields: [authorId], references: [id])
+}
+
+model Like {
+    userId    String
+    postId    String
+    createdAt DateTime @default(now())
+
+    post Post @relation(fields: [postId], references: [id])
+    user User @relation(fields: [userId], references: [id])
+
+    @@id([userId, postId])
+}
+
+model Comment {
+    id       String @id @default(cuid())
+    authorId String
+    postId   String
+
+    content  String
+    imageUrl String?
+
+    createdAt DateTime @default(now())
+
+    post   Post @relation(fields: [postId], references: [id])
+    author User @relation(fields: [authorId], references: [id])
+}
+
+model Listing {
+    id          String   @id @default(cuid())
+    sellerId    String
+    title       String
+    description String?
+    price       Int
+    category    String
+    status      String   @default("active")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    images ListingImage[]
+
+    seller User @relation(fields: [sellerId], references: [id])
+}
+
+model ListingImage {
+    id        String   @id @default(cuid())
+    listingId String
+    url       String
+    createdAt DateTime @default(now())
+
+    listing Listing @relation(fields: [listingId], references: [id])
+}
