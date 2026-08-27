@@ -3,6 +3,7 @@ node_modules/
 dist/
 **/src/generated/prisma
 **/prisma/*.db
+dev.db
 *.bak
 .DS_Store
 .agents/
