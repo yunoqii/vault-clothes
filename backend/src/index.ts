@@ -1,5 +1,7 @@
 import express from "express";
 import path from "path";
+import { createServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
 import "dotenv/config";
 import authRouter from "./routes/auth.routes";
 import postRouter from "./routes/post.routes";
@@ -18,8 +20,23 @@ app.use("/comments", commentRouter);
 app.use("/listings", listingRouter);
 app.use("/admin", adminRouter);
 
+// Socket.io должен сидеть на "сыром" http.Server, а не на самом app —
+// WS-рукопожатие идёт через тот же порт, что и обычный HTTP.
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer, {
+    cors: {
+        origin: "*", // TODO: сузить до реального адреса фронта, когда он появится
+    },
+});
 
+io.on("connection", (socket) => {
+    console.log(`socket connected: ${socket.id}`);
 
-app.listen(Number(process.env.BACKEND_PORT), () => {
+    socket.on("disconnect", (reason) => {
+        console.log(`socket disconnected: ${socket.id} (${reason})`);
+    });
+});
+
+httpServer.listen(Number(process.env.BACKEND_PORT), () => {
     console.log(`Server running on port ${process.env.BACKEND_PORT}`)
 })

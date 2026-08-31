@@ -31,6 +31,10 @@ model User {
     likes     Like[]
     comments  Comment[]
     listings  Listing[]
+
+    conversationsAsA Conversation[] @relation("ConversationParticipantA")
+    conversationsAsB Conversation[] @relation("ConversationParticipantB")
+    messages         Message[]
 }
 
 model Follow {
@@ -107,4 +111,28 @@ model ListingImage {
     createdAt DateTime @default(now())
 
     listing Listing @relation(fields: [listingId], references: [id])
+}
+
+model Conversation {
+    id             String   @id @default(cuid())
+    participantAId String
+    participantBId String
+    createdAt      DateTime @default(now())
+
+    participantA User      @relation("ConversationParticipantA", fields: [participantAId], references: [id])
+    participantB User      @relation("ConversationParticipantB", fields: [participantBId], references: [id])
+    messages     Message[]
+
+    @@unique([participantAId, participantBId])
+}
+
+model Message {
+    id             String   @id @default(cuid())
+    conversationId String
+    senderId       String
+    content        String
+    createdAt      DateTime @default(now())
+
+    conversation Conversation @relation(fields: [conversationId], references: [id])
+    sender       User         @relation(fields: [senderId], references: [id])
 }
