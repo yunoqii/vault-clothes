@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
 import { Prisma } from "../generated/prisma/client";
 import { prisma } from "../lib/prisma";
+import { getPaginationParams, getNextCursor } from "../lib/pagination";
 
 export const createListing = async (req: Request, res: Response) => {
-    const { title, description, price, category, images } = req.body;
+    const { title, description, category } = req.body;
+    const price = Number(req.body.price);
+    const files = req.files as Express.Multer.File[] | undefined;
 
-    if (typeof price !== "number" || price <= 0) {
+    if (Number.isNaN(price) || price <= 0) {
         return res.status(400).json({ error: "invalid price entered" });
     }
+
+    const imageUrls = (files ?? []).map(
+        (file) => `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+    );
 
     const listing = await prisma.listing.create({
         data: {
@@ -17,9 +24,7 @@ export const createListing = async (req: Request, res: Response) => {
             category,
             sellerId: req.userId as string,
             images: {
-                create: Array.isArray(images)
-                    ? images.map((url: string) => ({ url }))
-                    : [],
+                create: imageUrls.map((url) => ({ url })),
             },
         },
         include: {
@@ -35,14 +40,7 @@ const MAX_LISTINGS_LIMIT = 50;
 
 export const getListings = async (req: Request, res: Response) => {
     const { cursor, limit, category } = req.query;
-
-    let take = DEFAULT_LISTINGS_LIMIT;
-    if (typeof limit === "string") {
-        const parsedLimit = Number(limit);
-        if (!Number.isNaN(parsedLimit) && parsedLimit > 0) {
-            take = Math.min(parsedLimit, MAX_LISTINGS_LIMIT);
-        }
-    }
+    const { take, cursorClause } = getPaginationParams(limit, cursor, DEFAULT_LISTINGS_LIMIT, MAX_LISTINGS_LIMIT);
 
     const listings = await prisma.listing.findMany({
         where: {
@@ -54,12 +52,10 @@ export const getListings = async (req: Request, res: Response) => {
         include: {
             images: true,
         },
-        ...(typeof cursor === "string"
-            ? { skip: 1, cursor: { id: cursor } }
-            : {}),
+        ...cursorClause,
     });
 
-    const nextCursor = listings.length === take ? listings[listings.length - 1]!.id : null;
+    const nextCursor = getNextCursor(listings, take);
 
     return res.status(200).json({ listings, nextCursor });
 };

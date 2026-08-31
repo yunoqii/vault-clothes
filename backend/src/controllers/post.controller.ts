@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Prisma } from "../generated/prisma/client";
 import { prisma } from "../lib/prisma";
+import { getPaginationParams, getNextCursor } from "../lib/pagination";
 
 export const createPost = async (req: Request, res: Response) => {
     const { caption, title, imageUrl } = req.body;
@@ -23,14 +24,7 @@ const MAX_FEED_LIMIT = 50;
 
 export const getUserFeed = async (req: Request, res: Response) => {
     const { cursor, limit } = req.query;
-
-    let take = DEFAULT_FEED_LIMIT;
-    if (typeof limit === "string") {
-        const parsedLimit = Number(limit);
-        if (!Number.isNaN(parsedLimit) && parsedLimit > 0) {
-            take = Math.min(parsedLimit, MAX_FEED_LIMIT);
-        }
-    }
+    const { take, cursorClause } = getPaginationParams(limit, cursor, DEFAULT_FEED_LIMIT, MAX_FEED_LIMIT);
 
     const follows = await prisma.follow.findMany({
         where: {
@@ -46,12 +40,10 @@ export const getUserFeed = async (req: Request, res: Response) => {
         },
         take,
         orderBy: { createdAt: "desc" },
-        ...(typeof cursor === "string"
-            ? { skip: 1, cursor: { id: cursor } }
-            : {}),
+        ...cursorClause,
     });
 
-    const nextCursor = posts.length === take ? posts[posts.length - 1]!.id : null;
+    const nextCursor = getNextCursor(posts, take);
 
     return res.status(200).json({ posts, nextCursor });
 };
