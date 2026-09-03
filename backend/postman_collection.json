@@ -1,854 +1,898 @@
 {
-  "info": {
-    "name": "vault-clothes API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Auth",
-      "item": [
-        {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"test@example.com\",\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "const data = pm.response.json();",
-                  "if (data.token) {",
-                  "    pm.collectionVariables.set(\"token\", data.token);",
-                  "    console.log(\"saved token to {{token}}\");",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Posts",
-      "item": [
-        {
-          "name": "Create Post",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"caption\": \"my first post\",\n  \"title\": \"hello world\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/posts",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "posts"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Feed",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/posts?limit=10&cursor={{feedCursor}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "posts"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "10"
-                },
-                {
-                  "key": "cursor",
-                  "value": "{{feedCursor}}"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Like Post",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/posts/{{postId}}/like",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "posts",
-                "{{postId}}",
-                "like"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Unlike Post",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/posts/{{postId}}/like",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "posts",
-                "{{postId}}",
-                "like"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Users",
-      "item": [
-        {
-          "name": "Follow User",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users/{{userId}}/follow",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{userId}}",
-                "follow"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Unfollow User",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users/{{userId}}/follow",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{userId}}",
-                "follow"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Profile",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/users/{{username}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{username}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Comments",
-      "item": [
-        {
-          "name": "Leave Comment",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"content\": \"nice post!\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/posts/{{postId}}/comments",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "posts",
-                "{{postId}}",
-                "comments"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Comments",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/posts/{{postId}}/comments",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "posts",
-                "{{postId}}",
-                "comments"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Delete Comment",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/comments/{{commentId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "comments",
-                "{{commentId}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Listings",
-      "item": [
-        {
-          "name": "Create Listing",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "title",
-                  "value": "Vintage denim jacket",
-                  "type": "text"
-                },
-                {
-                  "key": "description",
-                  "value": "Barely worn, size M",
-                  "type": "text"
-                },
-                {
-                  "key": "price",
-                  "value": "1500",
-                  "type": "text"
-                },
-                {
-                  "key": "category",
-                  "value": "jackets",
-                  "type": "text"
-                },
-                {
-                  "key": "images",
-                  "type": "file",
-                  "src": []
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/listings",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Listings",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/listings?limit=10",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "10"
-                },
-                {
-                  "key": "category",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "cursor",
-                  "value": "",
-                  "disabled": true
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Listing",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Update Listing",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"price\": 4000,\n  \"status\": \"sold\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Delete Listing",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Admin",
-      "item": [
-        {
-          "name": "Get All Users",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/admin/users?limit=30",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "30"
-                },
-                {
-                  "key": "cursor",
-                  "value": "{{usersCursor}}",
-                  "disabled": true
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Ban/Unban User",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"isBanned\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/admin/users/{{targetUserId}}/ban",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users",
-                "{{targetUserId}}",
-                "ban"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Change User Role",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"role\": \"admin\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/admin/users/{{targetUserId}}/role",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users",
-                "{{targetUserId}}",
-                "role"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Admin Delete Comment",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/admin/comments/{{commentId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "comments",
-                "{{commentId}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Admin Delete Listing",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/admin/listings/{{listingId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "listings",
-                "{{listingId}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Conversations",
-      "item": [
-        {
-          "name": "Create Conversation",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"otherUserId\": \"replace-with-a-real-user-id\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/conversations",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "conversations"
-              ]
-            }
-          }
-        }
-      ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000"
-    },
-    {
-      "key": "token",
-      "value": ""
-    },
-    {
-      "key": "userId",
-      "value": ""
-    },
-    {
-      "key": "username",
-      "value": "testuser"
-    },
-    {
-      "key": "postId",
-      "value": ""
-    },
-    {
-      "key": "commentId",
-      "value": ""
-    },
-    {
-      "key": "feedCursor",
-      "value": ""
-    },
-    {
-      "key": "listingId",
-      "value": ""
-    },
-    {
-      "key": "usersCursor",
-      "value": ""
-    },
-    {
-      "key": "targetUserId",
-      "value": ""
-    }
-  ]
+	"info": {
+		"name": "vault-clothes API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const data = pm.response.json();",
+									"if (data.token) {",
+									"    pm.collectionVariables.set(\"token\", data.token);",
+									"    console.log(\"saved token to {{token}}\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"caption\": \"my first post\",\n  \"title\": \"hello world\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Feed",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts?limit=10&cursor={{feedCursor}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "cursor",
+									"value": "{{feedCursor}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}/like",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}",
+								"like"
+							]
+						}
+					}
+				},
+				{
+					"name": "Unlike Post",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}/like",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}",
+								"like"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Follow User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/follow",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"follow"
+							]
+						}
+					}
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/follow",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"follow"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{username}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{username}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Leave Comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"content\": \"nice post!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}",
+								"comments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Comments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}",
+								"comments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Listings",
+			"item": [
+				{
+					"name": "Create Listing",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Vintage denim jacket",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Barely worn, size M",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "1500",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "jackets",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Listings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/listings?limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "category",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "cursor",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Listing",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/listings/{{listingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings",
+								"{{listingId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Listing",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 4000,\n  \"status\": \"sold\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/listings/{{listingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings",
+								"{{listingId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Listing",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/listings/{{listingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings",
+								"{{listingId}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users?limit=30",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "cursor",
+									"value": "{{usersCursor}}",
+									"disabled": true
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Ban/Unban User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isBanned\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/{{targetUserId}}/ban",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"users",
+								"{{targetUserId}}",
+								"ban"
+							]
+						}
+					}
+				},
+				{
+					"name": "Change User Role",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/{{targetUserId}}/role",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"users",
+								"{{targetUserId}}",
+								"role"
+							]
+						}
+					}
+				},
+				{
+					"name": "Admin Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Admin Delete Listing",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/listings/{{listingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"listings",
+								"{{listingId}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Conversations",
+			"item": [
+				{
+					"name": "Create Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"otherUserId\": \"replace-with-a-real-user-id\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/conversations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"conversations"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Conversation Messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/conversations/replace-with-conversation-id/messages?limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"conversations",
+								"replace-with-conversation-id",
+								"messages"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "cursor",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": "testuser"
+		},
+		{
+			"key": "postId",
+			"value": ""
+		},
+		{
+			"key": "commentId",
+			"value": ""
+		},
+		{
+			"key": "feedCursor",
+			"value": ""
+		},
+		{
+			"key": "listingId",
+			"value": ""
+		},
+		{
+			"key": "usersCursor",
+			"value": ""
+		},
+		{
+			"key": "targetUserId",
+			"value": ""
+		}
+	]
 }

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../lib/prisma";
+import { recordFailedLoginAttempt, clearLoginAttempts } from "../lib/loginAttempts";
 
 export const register = async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
@@ -36,20 +37,25 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const ip = req.ip ?? "unknown";
 
     const user = await prisma.user.findUnique({
         where: { email },
     });
 
     if (!user) {
+        await recordFailedLoginAttempt(ip, email);
         return res.status(401).json({ error: "invalid email or password" });
     }
 
     const passwordMatches = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatches) {
+        await recordFailedLoginAttempt(ip, email);
         return res.status(401).json({ error: "invalid email or password" });
     }
+
+    await clearLoginAttempts(ip, email);
 
     const token = jwt.sign(
         { userId: user.id },

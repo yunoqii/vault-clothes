@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { Prisma } from "../generated/prisma/client";
 import { prisma } from "../lib/prisma";
+import { getConversationForParticipant } from "../lib/conversationAccess";
+import { getPaginationParams, getNextCursor } from "../lib/pagination";
 
 export const createConversation = async (req: Request, res: Response) => {
     const { otherUserId } = req.body;
@@ -47,4 +49,36 @@ export const createConversation = async (req: Request, res: Response) => {
 
         return res.status(500).json({ error: "something went wrong" });
     }
+};
+
+export const getConversationMessages = async (req: Request, res: Response) => {
+    const conversationId = req.params.id;
+    const userId = req.userId as string;
+
+    if (typeof conversationId !== "string") {
+        return res.status(400).json({ error: "invalid conversation id" });
+    }
+
+    const { conversation, isParticipant } = await getConversationForParticipant(conversationId, userId);
+
+    if (!conversation) {
+        return res.status(404).json({ error: "conversation not found" });
+    }
+
+    if (!isParticipant) {
+        return res.status(403).json({ error: "not a participant of this conversation" });
+    }
+
+    const { take, cursorClause } = getPaginationParams(req.query.limit, req.query.cursor, 20, 50);
+
+    const messages = await prisma.message.findMany({
+        where: { conversationId },
+        orderBy: { createdAt: "desc" },
+        take,
+        ...cursorClause,
+    });
+
+    const nextCursor = getNextCursor(messages, take);
+
+    return res.status(200).json({ messages, nextCursor });
 };
