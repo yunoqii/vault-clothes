@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import path from "path";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
@@ -14,6 +15,7 @@ import { socketAuth } from "./middlewares/socketAuth.middleware";
 import { setupChatSockets } from "./sockets/chat.socket";
 const app = express();
 
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 app.use("/auth", authRouter);
