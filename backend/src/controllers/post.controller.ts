@@ -38,6 +38,11 @@ export const getUserFeed = async (req: Request, res: Response) => {
         where: {
             authorId: { in: followingIds }
         },
+        include: {
+            author: {
+                select: { id: true, username: true },
+            },
+        },
         take,
         orderBy: { createdAt: "desc" },
         ...cursorClause,
